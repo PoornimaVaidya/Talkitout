@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PsycheBot</title>
+    <style>
+        /* Set background image */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-image: url('https://revivalresearch.org/wp-content/uploads/2024/10/world-mental-health-day.jpg'); /* Replace with your image URL */
+            background-size: contain; /* Ensures the image fits the page */
+            background-position: center; /* Centers the image */
+            background-repeat: no-repeat; /* Prevents the image from repeating */
+            background-attachment: fixed; /* Keeps the background fixed while scrolling */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            color: #333; /* Dark text color for better visibility */
+        }
+
+        /* Main container for chat */
+        #chat-container {
+            width: 60%;
+            margin: 50px auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly opaque white background */
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Input and button styling */
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: #f7f7f7; /* Light grey background */
+        }
+
+        #user-input:focus {
+            border-color: #007bff; /* Blue border on focus */
+            outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styling for messages */
+        .message {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user {
+            background-color: #d1e7fd;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .bot {
+            background-color: #f1f1f1;
+            text-align: left;
+            margin-right: auto;
+        }
+
+        /* Responsive chat container */
+        @media screen and (max-width: 768px) {
+            #chat-container {
+                width: 80%;
+            }
+
+            .message {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #333; margin-top: 20px;">Talkitout: Your Mental Health Companion</h1>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        function sendMessage() {
+            let userInput = document.getElementById("user-input").value;
+            let chatBox = document.getElementById("chat-box");
+
+            // Display the user's message
+            let userMessage = document.createElement("div");
+            userMessage.className = "message user";
+            userMessage.innerText = userInput;
+            chatBox.appendChild(userMessage);
+
+            // Send message to the server and get the bot's response
+            fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let botMessage = document.createElement("div");
+                botMessage.className = "message bot";
+                botMessage.innerText = data.response;
+                chatBox.appendChild(botMessage);
+            });
+
+            // Clear the input field
+            document.getElementById("user-input").value = "";
+        }
+
+        // Add event listener to send message when Enter is pressed
+        document.getElementById("user-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
